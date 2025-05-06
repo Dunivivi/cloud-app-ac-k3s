@@ -19,7 +19,19 @@ spec:
     spec:
       containers:
         - name: cloud-app
-          image: dunivivi/cloud-app:latest  # Docker Hub image
+          image: dunivivi/cloud-app:1.0.3  # Docker Hub image
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 5
