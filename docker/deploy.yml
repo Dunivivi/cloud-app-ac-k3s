@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-app
+spec:
+  replicas: 2 # scale the application
+  strategy:
+    type: RollingUpdate # zero downtime
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: cloud-app
+  template:
+    metadata:
+      labels:
+        app: cloud-app
+    spec:
+      containers:
+        - name: cloud-app
+          image: dunivivi/cloud-app:latest  # Docker Hub image
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
