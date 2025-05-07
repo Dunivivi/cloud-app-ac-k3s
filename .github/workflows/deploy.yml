@@ -6,35 +6,39 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v2
 
-      - name: Login to DockerHub
+      - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push Docker image
-        run: |
-          docker build -t dunivivi/cloud-app:${{ github.sha }} .
-          docker push dunivivi/cloud-app:${{ github.sha }}
+      - name: Build and push Docker image
+        id: build-image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: dunivivi/cloud-app:${{ github.sha }}  # Using commit SHA as the tag
 
-      - name: Set up KUBECONFIG
+      - name: Set up kubectl
         run: |
-          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > kubeconfig
+          echo "${{ secrets.KUBE_CONFIG_BASE64 }}" | base64 -d > kubeconfig
           export KUBECONFIG=$PWD/kubeconfig
-          mkdir -p ~/.kube
-          cp kubeconfig ~/.kube/config
+          kubectl config use-context default
 
-      - name: Update Deployment Image
+      - name: Update Deployment with new image tag
         run: |
-          kubectl config set-cluster default --server=${{ secrets.KUBE_SERVER }} --insecure-skip-tls-verify=true
-          kubectl set image deployment/cloud-app cloud-app=dunivivi/cloud-app:${{ github.sha }}
+          kubectl set image deployment/cloud-app cloud-app=dunivivi/cloud-app:${{ github.sha }} --record
 
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f deploy.yml
