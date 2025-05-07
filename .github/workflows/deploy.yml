@@ -37,3 +37,4 @@ jobs:
         run: |
           kubectl config set-cluster default --server=${{ secrets.KUBE_SERVER }} --insecure-skip-tls-verify=true
           kubectl set image deployment/cloud-app cloud-app=dunivivi/cloud-app:${{ github.sha }}
+
