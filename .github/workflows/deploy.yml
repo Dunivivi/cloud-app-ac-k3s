@@ -83,7 +83,7 @@ jobs:
         run: |
           echo "Applying Kubernetes deployment..."
           export KUBECONFIG="$HOME/k3s.yaml"
-          kubectl apply -f docker/deploy.yml || echo "Failed to apply Kubernetes deployment"
+#          kubectl apply -f docker/deploy.yml || echo "Failed to apply Kubernetes deployment"
           
           # Debugging: Verify the applied resources
           kubectl get deployments || echo "Failed to get deployments"
