@@ -72,6 +72,7 @@ jobs:
       - name: Update Deployment with new image tag
         run: |
           echo "Updating deployment..."
+          export KUBECONFIG="$HOME/k3s.yaml"
           kubectl set image deployment/cloud-app cloud-app=dunivivi/cloud-app:${{ github.sha }} --record || echo "Failed to set image for deployment"
           
           # Debugging: Verify the updated deployment status
@@ -81,6 +82,7 @@ jobs:
       - name: Deploy to Kubernetes
         run: |
           echo "Applying Kubernetes deployment..."
+          export KUBECONFIG="$HOME/k3s.yaml"
           kubectl apply -f docker/deploy.yml || echo "Failed to apply Kubernetes deployment"
           
           # Debugging: Verify the applied resources
