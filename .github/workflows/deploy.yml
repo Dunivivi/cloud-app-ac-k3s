@@ -60,7 +60,13 @@ jobs:
           
           echo "Trying curl to K3s server..."
           curl --insecure --connect-timeout 5 https://192.168.64.5:6443 || echo "Curl failed"
-      
+
+      - name: Test kubectl access
+        run: |
+          export KUBECONFIG="$HOME/kubeconfig.yml"
+          echo "Testing kubectl get pods..."
+          kubectl get pods --all-namespaces || echo "kubectl failed"
+
 
       # Step 6: Update Deployment with the new image tag
       - name: Update Deployment with new image tag
