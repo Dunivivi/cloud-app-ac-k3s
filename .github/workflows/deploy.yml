@@ -31,14 +31,14 @@ jobs:
 
       - name: Set up kubectl
         run: |
-          export KUBECONFIG="/Users/tudor/k3s.yaml"
+          echo "${{ secrets.KUBE_CONFIG_BASE64 }}" | base64 -d > kubeconfig
+          export KUBECONFIG=$PWD/kubeconfig
           kubectl config use-context default
 
-      - name: Update Deployment YAML with dynamic image tag
+      - name: Update Deployment with new image tag
         run: |
-          sed -i '' "s|dunivivi/cloud-app:.*|dunivivi/cloud-app:${{ github.sha }}|g" deploy.yml
+          kubectl set image deployment/cloud-app cloud-app=dunivivi/cloud-app:${{ github.sha }} --record
 
       - name: Deploy to Kubernetes
         run: |
-          export KUBECONFIG="/Users/tudor/k3s.yaml"
-          kubectl apply -f deploy.yml
+          kubectl apply -f docker/deploy.yml  # Reference deploy.yml from the docker directory
