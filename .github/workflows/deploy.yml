@@ -31,9 +31,9 @@ jobs:
 
       - name: Set up kubectl
         run: |
-          echo "${{ secrets.KUBE_CONFIG_BASE64 }}" | base64 -d > kubeconfig
-          export KUBECONFIG="$PWD/kubeconfig"
-          kubectl config use-context default
+          echo "${{ secrets.KUBE_CONFIG_BASE64 }}" | base64 -d > "$HOME/kubeconfig"  
+          export KUBECONFIG="$HOME/kubeconfig"  
+          kubectl config use-context default 
 
       - name: Update Deployment with new image tag
         run: |
