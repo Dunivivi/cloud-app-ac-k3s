@@ -63,7 +63,7 @@ jobs:
 
       - name: Test kubectl access
         run: |
-          export KUBECONFIG="$HOME/kubeconfig.yml"
+          export KUBECONFIG="$HOME/k3s.yaml"
           echo "Testing kubectl get pods..."
           kubectl get pods --all-namespaces || echo "kubectl failed"
 
