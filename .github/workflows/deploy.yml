@@ -37,11 +37,11 @@ jobs:
       - name: Set up kubectl
         run: |
           echo "Setting up kubectl..."
-          echo "${{ secrets.KUBE_CONFIG_BASE64 }}" | base64 -d > "$HOME/k3s.yaml"
+          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > "$HOME/k3s.yaml"
           export KUBECONFIG="$HOME/k3s.yaml"
           
           # Debugging: Verify the KUBECONFIG and list available contexts
-          echo "Kubeconfig file: $HOME/k3s.yml"
+          echo "Kubeconfig file: $HOME/k3s.yaml"
           kubectl config get-contexts || echo "Failed to list contexts"
 
           # Debugging: Try switching to the default context
