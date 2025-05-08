@@ -27,18 +27,18 @@ jobs:
         with:
           context: .
           push: true
-          tags: dunivivi/cloud-app:${{ github.sha }}  # Using commit SHA as the tag
+          tags: dunivivi/cloud-app:${{ github.sha }}
 
       - name: Set up kubectl
         run: |
-          echo "${{ secrets.KUBE_CONFIG_BASE64 }}" | base64 -d > kubeconfig
-          export KUBECONFIG=$PWD/kubeconfig
+          export KUBECONFIG="/Users/tudor/k3s.yaml"
           kubectl config use-context default
 
-      - name: Update Deployment with new image tag
+      - name: Update Deployment YAML with dynamic image tag
         run: |
-          kubectl set image deployment/cloud-app cloud-app=dunivivi/cloud-app:${{ github.sha }} --record
+          sed -i '' "s|dunivivi/cloud-app:.*|dunivivi/cloud-app:${{ github.sha }}|g" deploy.yml
 
       - name: Deploy to Kubernetes
         run: |
+          export KUBECONFIG="/Users/tudor/k3s.yaml"
           kubectl apply -f deploy.yml
