@@ -27,13 +27,18 @@ jobs:
         with:
           context: .
           push: true
-          tags: dunivivi/cloud-app:${{ github.sha }}
+          tags: dunivivi/cloud-app:${{ github.sha }}  # Using commit SHA as the tag
 
       - name: Set up kubectl
         run: |
-            echo "${{ secrets.KUBE_CONFIG_BASE64 }}" | base64 -d > "$HOME/kubeconfig.yml"
-            export KUBECONFIG="$HOME/kubeconfig.yml"
-            kubectl config use-context default
+          echo "${{ secrets.KUBE_CONFIG_BASE64 }}" | base64 -d > "$HOME/kubeconfig.yml"
+          export KUBECONFIG="$HOME/kubeconfig.yml"
+          
+          # Check if the context exists
+          kubectl config get-contexts
+
+          # Try switching to default context
+          kubectl config use-context default || echo "Context 'default' not found"
 
       - name: Update Deployment with new image tag
         run: |
@@ -41,4 +46,4 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl apply -f docker/deploy.yml  # Reference deploy.yml from the docker directory
+          kubectl apply -f docker/deploy.yml
