@@ -53,6 +53,15 @@ jobs:
           # Debugging: Get cluster info to verify connection
           kubectl cluster-info || echo "Failed to get cluster info"
 
+      - name: Debug K3s network connectivity
+        run: |
+          echo "Pinging K3s server..."
+          ping -c 4 192.168.64.5 || echo "Ping failed"
+          
+          echo "Trying curl to K3s server..."
+          curl --insecure --connect-timeout 5 https://192.168.64.5:6443 || echo "Curl failed"
+      
+
       # Step 6: Update Deployment with the new image tag
       - name: Update Deployment with new image tag
         run: |
