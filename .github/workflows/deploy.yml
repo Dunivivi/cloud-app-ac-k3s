@@ -71,3 +71,4 @@ jobs:
           # Debugging: Verify the applied resources
           kubectl get deployments || echo "Failed to get deployments"
           kubectl get pods || echo "Failed to get pods"
+
